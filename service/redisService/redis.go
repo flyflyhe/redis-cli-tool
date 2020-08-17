@@ -40,25 +40,14 @@ func GetRDB (host string, port int, password string, db int) RDB  {
 	return RDB{conn:rClient}
 }
 
-func (rdb RDB) MemoryUsage (cursor uint64) map[string]int64  {
-	keys, cursor, err := rdb.conn.Scan(context.Background(), cursor, "", 10).Result()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func (rdb RDB) MemoryUsage () map[string]int64  {
 	keyMemoryMap := make(map[string]int64)
-	for _, key := range keys {
+	for _, key := range rdb.GetAllKeys(0) {
 		b, err := rdb.conn.MemoryUsage(context.Background(), key).Result()
 		if err != nil {
 			log.Fatal(err)
 		}
 		keyMemoryMap[key] = b
-	}
-
-	if cursor != 0 {
-		for k, v := range rdb.MemoryUsage(cursor) {
-			keyMemoryMap[k] = v
-		}
 	}
 
 	return keyMemoryMap
