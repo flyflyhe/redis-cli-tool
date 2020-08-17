@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"os"
 	"redisTool/service/redisService"
 )
 
@@ -14,6 +16,15 @@ func main()  {
 	c := flag.String("c", "", redisService.GetHelperStr())
 
 	flag.Parse()
+
+	if *c == "" {
+		fmt.Print(redisService.GetHelperStr())
+		os.Exit(0)
+	}
+
+	if _, ok := redisService.FuncMap[*c]; !ok {
+		log.Fatal(*c + "未实现")
+	}
 
 	rdb := redisService.GetRDB(*host, *port, *password, *db)
 
