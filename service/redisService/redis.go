@@ -9,6 +9,7 @@ import (
 )
 
 var FuncMap = map[string]string{
+	"Info":"信息",
 	"GetAllKeys":"获取所有key",
 	"MemoryUsage":"获取所有key使用的存储",
 }
@@ -54,7 +55,7 @@ func (rdb RDB) MemoryUsage () map[string]int64  {
 }
 
 func (rdb RDB) GetAllKeys(cursor uint64) []string {
-	keys, cursor, err := rdb.conn.Scan(context.Background(), cursor, "", 10).Result()
+	keys, cursor, err := rdb.conn.Scan(context.Background(), cursor, "", 100).Result()
 	log.Println(cursor)
 	if err != nil {
 		log.Fatal(err)
@@ -68,4 +69,8 @@ func (rdb RDB) GetAllKeys(cursor uint64) []string {
 	}
 
 	return  keyList
+}
+
+func (rdb RDB) Info() string  {
+	return rdb.conn.Info(context.Background()).String()
 }

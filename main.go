@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"redisTool/service/logService"
 	"redisTool/service/redisService"
+	"strings"
 )
 
 func main()  {
@@ -28,11 +30,13 @@ func main()  {
 
 	rdb := redisService.GetRDB(*host, *port, *password, *db)
 
-	if *c == "GetAllKeys" {
-		keys := rdb.GetAllKeys(0)
-
-		for _, k := range keys {
-			log.Println(k)
-		}
+	switch *c {
+	case "GetAllKeys":
+		logService.PrintStrList(rdb.GetAllKeys(0))
+	case "Info":
+		info := rdb.Info()
+		logService.PrintStrList(strings.Split(info, "\\r\\n"))
+	case "MemoryUsage":
+		logService.PrintStrIntMap(rdb.MemoryUsage())
 	}
 }
